@@ -1,0 +1,34 @@
+digraph G {
+  node [style=filled];
+  N0 [label = "0"];
+  N1 [label = "1"];
+  N0 -> N1;
+  F0 [style=invis];
+  N0 -> F0 [style=invis];
+  N2 [label = "2"];
+  N0 -> N2;
+  N3 [label = "3"];
+  N1 -> N3;
+  F1 [style=invis];
+  N1 -> F1 [style=invis];
+  N4 [label = "4"];
+  N1 -> N4;
+  N5 [label = "5"];
+  N2 -> N5;
+  F2 [style=invis];
+  N2 -> F2 [style=invis];
+  N6 [label = "6"];
+  N2 -> N6;
+  N7 [label = "7"];
+  N3 -> N7;
+  F3 [style=invis];
+  N3 -> F3 [style=invis];
+  N8 [label = "8"];
+  N3 -> N8;
+  N9 [label = "9"];
+  N4 -> N9;
+  F4 [style=invis];
+  N4 -> F4 [style=invis];
+  N10 [style = invis];
+  N4 -> N10 [style=invis];
+}

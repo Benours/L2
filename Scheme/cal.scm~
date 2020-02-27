@@ -1,0 +1,15 @@
+(define (bissextile? a) (if (and (= (modulo a 4) 0)
+                                 (or (not (= (modulo a 100) 0))
+                                     (= (modulo a 400) 0)))
+                            #t
+                            #f))
+(define (nb-annees-bissextiles a) (if (>= a 1900)
+                                     (+ (if (bissextile? a)
+                                            1
+                                            0)
+                                        (nb-annees-bissextiles (- a 1))) 0))
+(define nbjours (list 31 28 31 30 31 30 31 31 30 31 30 31))
+(define (nb-jours-au-1-jan m) (if (not (= m 1))
+                                  (+ (nb-jours-au-1-jan (- m 1))
+                                                   (list-ref nbjours (- m 2)))
+                                  0))

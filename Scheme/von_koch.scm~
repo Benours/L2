@@ -1,0 +1,8 @@
+(require (lib "turtles.ss" "graphics"))
+
+(define (cas-de-base a) (begin (draw a)))
+(define (
+                              
+                              
+                              
+                              

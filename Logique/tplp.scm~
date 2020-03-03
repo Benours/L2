@@ -39,7 +39,10 @@
 (display "F => ") F
 (display "G => ") G
 (display "H => ") H
-;(define F1 ...)
+(define F1 '(<-> (^ a b) (v (! a) b)))
+(define F2 '(v (! (^ a (! b))) (! (-> a b))))
+(define F3 '(^ (! (-> a (v a b))) (! (! (^ a (v b (! c)))))))
+(define F4 '(^ (v (! a) (v a d)) (^ (v (! d) c) (^ (v c a) (^ (v (! c) (! d)) (v (! b) d))))))
 
 ; Q2
 (display "\nQ2\n")
@@ -47,22 +50,30 @@
 (display "(fbf? G) => ") (fbf? G)
 (display "(fbf? H) => ") (fbf? H)
 (display "(fbf? '(! a b)) => ") (fbf? '(! a b))
-;(fbf? F1)
+(display "(fbf? F1) => ") (fbf? F1)
+(display "(fbf? F2) => ") (fbf? F2)
+(display "(fbf? F3) => ") (fbf? F3)
+(display "(fbf? F4) => ") (fbf? F4)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 2 Syntaxe des propositions
 
-;Q3
-;(define (nbc F)
-;  (cond ((atomicFbf? F) ...)
-;        ((negFbf? F)    ...)
-;        (else           ...)))
+; Q3
+(define (nbc F) (cond ((atomicFbf? F) 0)
+                      ((negFbf? F) (+ 1 (nbc (fils F))))
+                      (else (+ 1 (nbc (filsG F)) (nbc (filsD F))))))
 
 ;Q4
-;(define (prof f)
+(define (prof F) (cond ((atomicFbf? F) 0)
+                      ((negFbf? F) (+ 1 (prof (fils F))))
+                      (else (+ 1 (max (prof (filsG F)) (prof (filsD F)))))))
 
 ;Q5
+(define (ensSP F) (cond ((symbProp? F) (list F))
+                        ((atomicFbf? F) (list))
+                        ((negFbf? F) (ensSP (fils F)))
+                        (else (set-union (ensSP (filsG F)) (ensSP (filsD F))))))
 
 ;Q6
 
@@ -73,34 +84,49 @@
 (define I '((a . 0) (b . 1)))
 
 ;Q7
-;(define I1 
+(define I1 '((a . 1) (b . 0) (c . 1)))
+(define I2 '((a . 0) (b . 0) (c . 0)))
+(define I3 '((a . 1) (b . 1) (c . 1)))
 
 ;Q8
-;(define (intSymb s I)
-;  (cond ((eq? s (car (set-first I))) (cdr (set-first I)))
-;        (else              ...)))
+(define (intSymb s I)
+  (cond ((eq? s (car (set-first I))) (cdr (set-first I)))
+        (else (intSymb s (set-rest I)))))
 
 ;Q9
 (define (intAnd v1 v2) (* v1 v2))
-;(define intTop   ...)
+(define intTop 1)
+(define intBot 0)
+(define (intOr v1 v2) (max v1 v2))
+(define (intNeg v1) (if (= v1 1) 0 1))
+(define (intImp v1 v2) (if (and (= v1 1) (= v2 0)) 0 1))
+(define (intEqu v1 v2) (if (= v1 v2) 1 0))
  
 ;Q10
-
+(define (valV F I) (cond ((symbProp? F) (intSymb F I))
+                         ((negFbf? F) (intNeg (valV (fils F) I)))
+                         ((conjFbf? F) (intAnd (valV (filsD F) I) (valV (filsG F) I)))
+                         ((disjFbf? F) (intOr (valV (filsD F) I) (valV (filsG F) I)))                         
+                         ((implFbf? F) (intImp (valV (filsD F) I) (valV (filsG F) I)))
+                         ((equiFbf? F) (intEqu (valV (filsD F) I) (valV (filsG F) I)))
+                         ((top? F) (intTop))
+                         ((bot? F) (intBot))))
+                         
 ;Q11
-
+(define (modele? F I) (if (= (valV F I) 1) #t #f))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 4 Satisfiabilite, Validite
 
 ;Q12
-; (define EI ...)
+(define EI '(((p . 0) (q . 0))((p . 0) (q . 1))((p . 1) (q . 0))((p . 1) (q . 1))))
 
 ;Q13
-;(define (ensInt ensSymb)
-;  (if (set-empty? ensSymb) '(())
-;      (let ( (EI ...) )
-;                 (append (map (lambda (I) (set-add I ...)) EI)
-;                         (map (lambda (I) (set-add I ...)) EI)))))
+(define (ensInt ensSymb)
+  (if (set-empty? ensSymb) '(())
+      (let ( (EI '()) )
+                 (append (map (lambda (I) (set-add I (car ensSymb))) EI)
+                         (map (lambda (I) (set-add I (cdar ensSymb))) EI)))))
                                  
 ;Q14
 

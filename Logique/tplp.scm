@@ -119,20 +119,23 @@
 ; 4 Satisfiabilite, Validite
 
 ;Q12
-; (define EI ...)
+(define EI '(((p . 0) (q . 0))((p . 0) (q . 1))((p . 1) (q . 0))((p . 1) (q . 1))))
 
 ;Q13
-;(define (ensInt ensSymb)
-;  (if (set-empty? ensSymb) '(())
-;      (let ( (EI ...) )
-;                 (append (map (lambda (I) (set-add I ...)) EI)
-;                         (map (lambda (I) (set-add I ...)) EI)))))
+(define (ensInt ensSymb)
+  (if (set-empty? ensSymb) '(())
+      (let ( (EI (ensInt (cdr ensSymb))) )
+                 (append (map (lambda (I) (set-add I (cons (car ensSymb) 0))) EI)
+                         (map (lambda (I) (set-add I (cons (car ensSymb) 1))) EI)))))
                                  
 ;Q14
+(define (satisfiable? F) (ormap (lambda (I) (modele? F I)) (ensInt (ensSP F))))
 
 ;Q15
+(define (valide? F) (andmap (lambda (I) (modele? F I)) (ensInt (ensSP F))))
 
 ;Q16
+(define (insatisfiable? F) (null? (filter (lambda (I) (modele? F I)) (ensInt (ensSP F)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;

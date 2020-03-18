@@ -142,14 +142,24 @@
 ; 5 Equivalence, Consequence
 
 ;Q17
+(define (equivalent1? F G) (andmap (lambda (I) (= (valV F I) (valV G I)))
+                                   (ensInt (append (ensSP F) (ensSP G)))))
 
 ;Q17 bis
+(define (equivalent2? F G) (valide? (list '<-> F G)))
 
 ;Q18
+(define (consequence? F1 F2) (andmap (lambda (I) (if (modele? F1 I)
+                                                     (modele? F2 I)
+                                                     #t))
+                                     (ensInt (set-union (ensSP F1) (ensSP F2)))))
 
 ;Q19
+(define (ensSPallFbf E) (if (set-empty? E) '()
+                            (set-union (ensSP (car E)) (ensSPallFbf (cdr E)))))
 
 ;Q20
+(define (modeleCommun? I EP) (andmap (lambda (F) (modele? F I)) EP))
 
 ;Q21
         

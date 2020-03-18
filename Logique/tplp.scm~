@@ -124,25 +124,32 @@
 ;Q13
 (define (ensInt ensSymb)
   (if (set-empty? ensSymb) '(())
-      (let ( (EI '()) )
-                 (append (map (lambda (I) (set-add I (car ensSymb))) EI)
-                         (map (lambda (I) (set-add I (cdar ensSymb))) EI)))))
+      (let ( (EI (ensInt (cdr ensSymb))) )
+                 (append (map (lambda (I) (set-add I (cons (car ensSymb) 0))) EI)
+                         (map (lambda (I) (set-add I (cons (car ensSymb) 1))) EI)))))
                                  
 ;Q14
+(define (satisfiable? F) (ormap (lambda (I) (modele? F I)) (ensInt (ensSP F))))
 
 ;Q15
+(define (valide? F) (andmap (lambda (I) (modele? F I)) (ensInt (ensSP F))))
 
 ;Q16
+(define (insatisfiable? F) (null? (filter (lambda (I) (modele? F I)) (ensInt (ensSP F)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 5 Equivalence, Consequence
 
 ;Q17
+(define (equivalent1? F G) (andmap (lambda (a) (= (valV F a) (valV G a)))
+                                   (ensInt (append (ensSP F) (ensSP G)))))
 
 ;Q17 bis
+(define (equivalent2? F G) (valide? (list '<-> F G)))
 
 ;Q18
+(define (consequence? F1 F2) (
 
 ;Q19
 

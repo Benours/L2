@@ -1,0 +1,7 @@
+(define LVal '(1 2 3 4 5 6 7 8 9 10 25 50 75 100))
+(define Op '(+ * - /))
+(define (make-cible) (+ (random 899) 100))
+(define (make-tirage n) (if (= n 0)
+                            '()
+                            (set-union (list-ref LVal (random (- (length LVal) 1)))
+                                       (make-tirage (- n 1)))))
